@@ -1,25 +1,12 @@
-import logo from './logo.svg';
-import './App.css';
+import Step1 from "./components/Step1";
+import Step2 from "./components/Step2";
+import Card from "./components/Card";
+import CardView from "./components/CardView";
+import Alert from "./components/Alert";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+function App({ message }) {
+  const alert = "This is an error";
+  return <Alert />;
 }
 
 export default App;
