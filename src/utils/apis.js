@@ -14,7 +14,13 @@ export async function fetchDataThroughAPI({ showAlert }) {
   });
 }
 
-export async function uploadDataThroughAPI({ showAlert, step1, step2 }) {
+export async function uploadDataThroughAPI({
+  showAlert,
+  step1,
+  step2,
+  update = false,
+  id = -1,
+}) {
   if (!step1 || !step2) return showAlert("Enter form data correctly", 1);
 
   const body = {
@@ -30,6 +36,28 @@ export async function uploadDataThroughAPI({ showAlert, step1, step2 }) {
     total_employee: step2.total_employee,
     apply_type: step2.apply_type,
   };
+
+  if (update && id !== -1) {
+    return new Promise((resolve, reject) => {
+      axios
+        .put(
+          `https://${process.env.REACT_APP_API_KEY}.mockapi.io/data1/${id}`,
+          {
+            method: "PUT",
+            headers: { "content-type": "application/json" },
+            body: body,
+          }
+        )
+        .then((res) => {
+          showAlert("Data updated successfully", 0);
+          resolve();
+        })
+        .catch((e) => {
+          showAlert("Something went wrong : error", 1);
+          reject("Something went wrong");
+        });
+    });
+  }
 
   return new Promise((resolve, reject) => {
     axios

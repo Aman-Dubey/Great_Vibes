@@ -55,6 +55,12 @@ export default function Card({ data, id, showAlert, onDelete, setIsLoading }) {
       });
   };
 
+  const convertNumberToCommaSeperatedRegex = (num) => {
+    return num
+      .replace(/(\.\d{2})\d*/, "$1")
+      .replace(/(\d)(?=(\d{3})+\b)/g, "$1,");
+  };
+
   return (
     <>
       <Confirmation
@@ -85,12 +91,20 @@ export default function Card({ data, id, showAlert, onDelete, setIsLoading }) {
                 <CardText title="Part-Time (9.00am - 5.00pm IST)" />
                 <CardText
                   title={`Experience (${
-                    experience_min ? experience_min : "NA"
-                  } - ${experience_max ? experience_max : "NA"} years)`}
+                    experience_min ? Math.round(experience_min) : "NA"
+                  } - ${
+                    experience_max ? Math.round(experience_max) : "NA"
+                  } years)`}
                 />
                 <CardText
-                  title={`INR (\u20B9) ${salary_min ? salary_min : "NA"} - ${
-                    salary_max ? salary_max : "NA"
+                  title={`INR (\u20B9) ${
+                    salary_min
+                      ? convertNumberToCommaSeperatedRegex(salary_min)
+                      : "NA"
+                  } - ${
+                    salary_max
+                      ? convertNumberToCommaSeperatedRegex(salary_max)
+                      : "NA"
                   } / Month`}
                 />
                 <CardText

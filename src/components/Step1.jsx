@@ -75,7 +75,11 @@ export default function Step1({ showAlert }) {
         1
       );
     navigate("/form2", {
-      state: { step1, toUpdate: location.state ? location.state.data : null },
+      state: {
+        step1,
+        toUpdate: location.state ? location.state.data : null,
+        id: location.state ? location.state.id : -1,
+      },
     });
   };
 

@@ -15,6 +15,8 @@ export default function Step2({ showAlert }) {
   const [applyType, setApplyType] = useState();
   const step1 = location.state.step1;
   const [isLoading, setIsLoading] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [id, setID] = useState(-1);
   const [step2, setStep2] = useState({
     experience_min: "",
     experience_max: "",
@@ -36,6 +38,8 @@ export default function Step2({ showAlert }) {
       apply_type: toUpdateData.apply_type,
     });
     setApplyType(toUpdateData.apply_type);
+    setIsUpdate(true);
+    setID(location.state.id);
   }, [location.state]);
 
   const formSubmitHandler = (e) => {
@@ -83,6 +87,8 @@ export default function Step2({ showAlert }) {
       showAlert,
       step1,
       step2,
+      update: isUpdate,
+      id,
     })
       .then((res) => {
         setIsLoading(false);
