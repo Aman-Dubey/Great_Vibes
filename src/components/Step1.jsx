@@ -1,11 +1,70 @@
-import React from "react";
+import React, { useState } from "react";
 import InputField from "./InputField";
 import { Constants } from "../constants/constants";
 import Heading from "./Heading";
 import Button from "./Button";
+import { useNavigate } from "react-router-dom";
 
-export default function Step1() {
+export default function Step1({ showAlert }) {
+  const navigate = useNavigate();
   const { overall, font_size, font_weight } = Constants;
+  const [step1, setStep1] = useState({
+    job_title: "",
+    company_name: "",
+    industry: "",
+    location: "",
+    remote_type: "",
+  });
+
+  const formSubmitHandler = (e) => {
+    e.preventDefault();
+    // basic validations
+    // job_title
+    if (step1.job_title === "") return showAlert("Please enter Job title", 1);
+    if (step1.job_title.length <= 3)
+      return showAlert(
+        "Job title length should be atleast 4 characters long",
+        1
+      );
+    if (step1.job_title.length >= 100)
+      return showAlert("Job title length cannot exceeds 100 characters", 1);
+
+    // company name
+    if (step1.company_name === "")
+      return showAlert("Please enter Company name", 1);
+    if (step1.company_name.length <= 2)
+      return showAlert(
+        "Company name length should be atleast 3 characters long",
+        1
+      );
+    if (step1.company_name.length >= 100)
+      return showAlert("Company name length cannot exceeds 100 characters", 1);
+
+    // industry
+    if (step1.industry === "")
+      return showAlert("Please enter Industry name", 1);
+    if (step1.industry.length <= 4)
+      return showAlert(
+        "Industry name length should be atleast 5 characters long",
+        1
+      );
+    if (step1.industry.length >= 100)
+      return showAlert("Industry name length cannot exceeds 100 characters", 1);
+
+    // location
+    if (step1.location.length >= 50)
+      return showAlert("Industry name length cannot exceeds 50 characters", 1);
+
+    // remote type
+    if (step1.remote_type.length >= 20)
+      return showAlert(
+        "Remote type name length cannot exceeds 20 characters",
+        1
+      );
+    console.log("success");
+    navigate("/form2", { state: step1 });
+  };
+
   return (
     <div>
       <div
@@ -25,41 +84,54 @@ export default function Step1() {
             />
           </div>
 
-          <form>
+          <form onSubmit={formSubmitHandler}>
             <div className="grid gap-6 mt-6 mb-6 md:grid-cols-1">
               <InputField
                 title="Job title"
+                id="job_title"
                 isRequired={true}
                 placeHolder="UX UI Designer"
+                setForm={setStep1}
               />
 
               <InputField
                 title="Company name"
+                id="company_name"
                 isRequired={true}
                 placeHolder="Google"
+                setForm={setStep1}
               />
 
               <InputField
                 title="Industry"
+                id="industry"
                 isRequired={true}
                 placeHolder="Information Technology"
+                setForm={setStep1}
               />
             </div>
 
             <div className="grid gap-6 mt-7 mb-6 md:grid-cols-2">
               <InputField
                 title="Location"
+                id="location"
                 isRequired={false}
                 placeHolder="Chennai"
+                setForm={setStep1}
               />
 
               <InputField
                 title="Remote type"
+                id="remote_type"
                 isRequired={false}
                 placeHolder="In-office"
+                setForm={setStep1}
               />
             </div>
-            <div className="flex justify-end items-end absolute bottom-[32px] right-[32px]">
+            <div
+              className="flex justify-end items-end absolute bottom-[32px] right-[32px]"
+              onClick={formSubmitHandler}
+            >
               <Button fontWeight={font_weight.medium} title="Next" />
             </div>
           </form>

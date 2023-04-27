@@ -4,89 +4,185 @@ import { Constants } from "../constants/constants";
 import Heading from "./Heading";
 import Button from "./Button";
 import Radio from "./Radio";
+import { useLocation, useNavigate } from "react-router-dom";
+import { uploadDataThroughAPI } from "../utils/apis";
+import Loading from "./Loading";
 
-export default function Step2() {
+export default function Step2({ showAlert }) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const { font_size, font_weight } = Constants;
   const [applyType, setApplyType] = useState();
-  console.log(applyType);
+  const step1 = location.state;
+  const [isLoading, setIsLoading] = useState(false);
+  const [step2, setStep2] = useState({
+    experience_min: 0,
+    experience_max: 0,
+    salary_min: 0,
+    salary_max: 0,
+    total_employee: "0",
+    apply_type: "",
+  });
+
+  const formSubmitHandler = (e) => {
+    e.preventDefault();
+
+    //basic validation
+    //step1 data
+
+    if (!step1) return showAlert("Please fill page 1 of the form", 1);
+    if (step1.job_title === "") return showAlert("Please enter Job title", 1);
+    //experience_min && max
+    if (step2.experience_min >= 100)
+      return showAlert("Experience should be less than 100 years", 1);
+    if (step2.experience_min < 0)
+      return showAlert("Experience cannot be negative", 1);
+    if (step2.experience_max >= 100)
+      return showAlert("Experience should be less than 100 years", 1);
+    if (step2.experience_max < 0)
+      return showAlert("Experience cannot be negative", 1);
+    if (step2.experience_max < step2.experience_min)
+      return showAlert(
+        "Maximum experience should be greater or equal to Minimum experience",
+        1
+      );
+
+    //salary_min && max
+    if (step2.salary_min >= 1000000000)
+      return showAlert("Salary cannot exceed \u20B9 1000000000", 1);
+    if (step2.salary_min < 0) return showAlert("Salary cannot be negative", 1);
+    if (step2.salary_max >= 1000000000)
+      return showAlert("Salary cannot exceed \u20B9 1000000000", 1);
+    if (step2.salary_max < 0) return showAlert("Salary cannot be negative", 1);
+    if (step2.salary_max < step2.salary_min)
+      return showAlert(
+        "Maximum salary should be greater or equal to Minimum salary",
+        1
+      );
+
+    //apply_type: No validation required as its value can either be null or "quick" | "external"
+    if (applyType) step2.apply_type = applyType;
+
+    setIsLoading(true);
+
+    uploadDataThroughAPI({
+      showAlert,
+      step1,
+      step2,
+    })
+      .then((res) => {
+        setIsLoading(false);
+        console.log("Uploaded ");
+        navigate("/");
+      })
+      .catch((e) => {
+        setIsLoading(false);
+        console.log("Not uploaded");
+      });
+  };
+
   return (
-    <div>
-      <div className="w-[564px] h-[577px] bg-[#FFFFFF] rounded-xl border border-[#E6E6E6] relative">
-        <div className="p-9">
-          <div className="flex text-[#212121] justify-between">
-            <Heading
-              title="Create a job"
-              fontWeight={font_weight.normal}
-              textSize={font_size.xtra_large}
-            />
-            <Heading
-              title="Step 2"
-              fontWeight={font_weight.base}
-              textSize={font_size.large}
-            />
+    <>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <div>
+          <div className="w-[564px] h-[577px] bg-[#FFFFFF] rounded-xl border border-[#E6E6E6] relative">
+            <div className="p-9">
+              <div className="flex text-[#212121] justify-between">
+                <Heading
+                  title="Create a job"
+                  fontWeight={font_weight.normal}
+                  textSize={font_size.xtra_large}
+                />
+                <Heading
+                  title="Step 2"
+                  fontWeight={font_weight.base}
+                  textSize={font_size.large}
+                />
+              </div>
+
+              <form onSubmit={formSubmitHandler}>
+                <div className="grid gap-6 mt-6 mb-6 md:grid-cols-2">
+                  <InputField
+                    title="Experience"
+                    id="experience_min"
+                    type="number"
+                    isRequired={false}
+                    isExAbsent={true}
+                    placeHolder="Minimum"
+                    setForm={setStep2}
+                  />
+
+                  <InputField
+                    id="experience_max"
+                    type="number"
+                    isRequired={false}
+                    isExAbsent={true}
+                    placeHolder="Maximum"
+                    setForm={setStep2}
+                  />
+
+                  <InputField
+                    title="Salary"
+                    id="salary_min"
+                    type="number"
+                    isRequired={false}
+                    isExAbsent={true}
+                    placeHolder="Minimum"
+                    setForm={setStep2}
+                  />
+
+                  <InputField
+                    id="salary_max"
+                    type="number"
+                    isRequired={false}
+                    isExAbsent={true}
+                    placeHolder="Maximum"
+                    setForm={setStep2}
+                  />
+                </div>
+
+                <div className="grid gap-6 mt-7 mb-6 md:grid-cols-1">
+                  <InputField
+                    id="total_employee"
+                    title="Total employee"
+                    type="text"
+                    isRequired={false}
+                    placeHolder="51 - 200"
+                    setForm={setStep2}
+                  />
+                </div>
+
+                <div className="block mb-1 text-sm font-poppins font-medium text-[#212121]">
+                  Apply type
+                </div>
+                <div className="flex justify-start items-center space-x-3 mt-2">
+                  <Radio
+                    value="quick"
+                    name="apply_type"
+                    onChange={setApplyType}
+                    title="Quick apply"
+                  />
+                  <Radio
+                    value="extrenal"
+                    name="apply_type"
+                    onChange={setApplyType}
+                    title="External apply"
+                  />
+                </div>
+
+                <div
+                  className="flex justify-end items-end absolute bottom-[32px] right-[32px]"
+                  onClick={formSubmitHandler}
+                >
+                  <Button fontWeight={font_weight.medium} title="Save" />
+                </div>
+              </form>
+            </div>
           </div>
-
-          <form>
-            <div className="grid gap-6 mt-6 mb-6 md:grid-cols-2">
-              <InputField
-                title="Experience"
-                isRequired={false}
-                isExAbsent={true}
-                placeHolder="Minimum"
-              />
-
-              <InputField
-                isRequired={false}
-                isExAbsent={true}
-                placeHolder="Maximum"
-              />
-
-              <InputField
-                title="Salary"
-                isRequired={false}
-                isExAbsent={true}
-                placeHolder="Minimum"
-              />
-
-              <InputField
-                isRequired={false}
-                isExAbsent={true}
-                placeHolder="Maximum"
-              />
-            </div>
-
-            <div className="grid gap-6 mt-7 mb-6 md:grid-cols-1">
-              <InputField
-                title="Total employee"
-                isRequired={false}
-                placeHolder="100"
-              />
-            </div>
-
-            <div className="block mb-1 text-sm font-poppins font-medium text-[#212121]">
-              Apply type
-            </div>
-            <div className="flex justify-start items-center space-x-3 mt-2">
-              <Radio
-                value="quick"
-                name="apply_type"
-                onChange={setApplyType}
-                title="Quick apply"
-              />
-              <Radio
-                value="extrenal"
-                name="apply_type"
-                onChange={setApplyType}
-                title="External apply"
-              />
-            </div>
-
-            <div className="flex justify-end items-end absolute bottom-[32px] right-[32px]">
-              <Button fontWeight={font_weight.medium} title="Save" />
-            </div>
-          </form>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
