@@ -22,6 +22,14 @@ Install all the npm packages. Go into the project folder and type the following 
 npm install
 ```
 
+Then add your mockapi url key in .env file
+
+```bash
+REACT_APP_API_KEY=your_key
+```
+
+And create your project model by `data1` name.
+
 In order to run the application Type the following command
 
 ```bash
