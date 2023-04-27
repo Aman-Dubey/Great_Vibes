@@ -39,7 +39,6 @@ export async function uploadDataThroughAPI({ showAlert, step1, step2 }) {
         body: body,
       })
       .then((res) => {
-        console.log(res);
         showAlert("Data uploaded successfully", 0);
         resolve();
       })
@@ -50,7 +49,7 @@ export async function uploadDataThroughAPI({ showAlert, step1, step2 }) {
   });
 }
 
-export async function deleteDataThroughAPI({ showAlert, id }) {
+export async function deleteDataThroughAPI({ id }) {
   return new Promise((resolve, reject) => {
     axios
       .delete(
@@ -59,15 +58,11 @@ export async function deleteDataThroughAPI({ showAlert, id }) {
           method: "DELETE",
         }
       )
-      .then((res) => {
-        console.log(res);
-        showAlert("Data deleted successfully", 0);
+      .then(() => {
         resolve();
       })
       .catch((e) => {
-        console.log(e);
         reject("Something is wrong");
-        showAlert("Please try again later, something is wrong", 1);
       });
   });
 }

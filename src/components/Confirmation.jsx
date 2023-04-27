@@ -1,6 +1,11 @@
 import React from "react";
 
-export default function Confirmation({ showModal, setShowModal, deleteData }) {
+export default function Confirmation({
+  showModal,
+  setShowModal,
+  deleteData,
+  title,
+}) {
   return (
     <>
       {showModal ? (
@@ -14,7 +19,9 @@ export default function Confirmation({ showModal, setShowModal, deleteData }) {
                   onClick={() => setShowModal(false)}
                   className="flex items-start justify-between p-5 rounded-t"
                 >
-                  <h3 className="text-3xl font-semibold">Are You Sure ?</h3>
+                  <h3 className="text-2xl font-poppins font-semibold">
+                    Are You Sure ?
+                  </h3>
                   {/* Cross Button */}
                   <div className="flex justify-center items-center w-10 h-10 border-red-600 border-2 p-2 rounded-full">
                     <span className="text-2xl text-red-600">X</span>
@@ -22,13 +29,13 @@ export default function Confirmation({ showModal, setShowModal, deleteData }) {
                 </div>
                 {/*body*/}
                 <div className="relative p-6 flex-auto">
-                  <p className="text-lg leading-relaxed">
-                    Press Delete Button to delete{" "}
-                    <span className="font-poppins text-black text-xl font-bold">
-                      {" "}
-                      La La Land{" "}
-                    </span>{" "}
-                    movie Permanently, otherwise Close Button.
+                  <p className="text-md font-poppins font-normal line-clamp-3 leading-relaxed">
+                    Press {<span className="text-red-500">DELETE</span>} Button
+                    to delete{" "}
+                    <span className=" text-black font-bold"> {title} </span> Job
+                    Permanently, otherwise press{" "}
+                    {<span className="text-emerald-500">CLOSE</span>} Button to
+                    back.
                   </p>
                 </div>
                 {/*footer*/}

@@ -33,10 +33,6 @@ export const Constants = {
     astrict: "#D86161",
     text_field_bg: "#FFFFFF",
   },
-  rounded: {
-    form_outer: "xl",
-    button: "md",
-  },
   overall: {
     padding: "9",
   },

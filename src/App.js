@@ -23,7 +23,12 @@ function App() {
         <div className="flex justify-end items-center min-h-screen min-w-max bg-[#D8D8D8]">
           <div className="mx-auto">
             <Routes>
-              <Route exact path="/" index element={<CardView />} />
+              <Route
+                exact
+                path="/"
+                index
+                element={<CardView showAlert={showAlert} />}
+              />
               <Route
                 exact
                 path="/form1"

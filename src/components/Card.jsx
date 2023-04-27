@@ -5,10 +5,14 @@ import CardText from "./CardText";
 import { ReactComponent as Delete } from "../svg/delete.svg";
 import { ReactComponent as Edit } from "../svg/edit.svg";
 import { deleteDataThroughAPI } from "../utils/apis";
+import { useNavigate } from "react-router-dom";
+import Confirmation from "./Confirmation";
 
-export default function Card({ data, id, showAlert, onDelete }) {
+export default function Card({ data, id, showAlert, onDelete, setIsLoading }) {
   const { font_weight } = Constants;
-  const [showModel, setShowModel] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
+
   const {
     job_title,
     company_name,
@@ -30,78 +34,102 @@ export default function Card({ data, id, showAlert, onDelete }) {
 
   const editBtnHandler = (e) => {
     e.preventDefault();
-    console.log(id);
+    navigate("/form1", { state: { data, id } });
   };
 
-  const deleteBtnHandler = (e) => {
+  const deleteBtnClickHandler = (e) => {
     e.preventDefault();
-    setShowModel(true);
+    setShowModal(true);
+  };
+
+  const deleteData = () => {
+    setIsLoading(true);
     deleteDataThroughAPI({ showAlert, id })
       .then(() => {
         onDelete(id);
+        setIsLoading(false);
       })
       .catch((e) => {
-        console.log("Unable to delete, please try again");
+        showAlert("Unable to delete data. Try again", 1);
+        setIsLoading(false);
       });
   };
 
   return (
-    <div className="relative w-[830px] h-[320px] bg-[#FFFFFF] rounded-lg border-2 border-[#DADEDF] p-4 m-8">
-      <div className="flex w-full h-full space-x-2">
-        <div className="w-12 h-12 ml-2">
-          <img src="assets/netflix.png" alt="logo" />
-        </div>
-        <div className="relative flex flex-col justify-between w-full">
-          <div>
-            <p className={`text-2xl font-poppins font-normal line-clamp-1`}>
-              {capitalize(job_title)}
-            </p>
+    <>
+      <Confirmation
+        showModal={showModal}
+        setShowModal={setShowModal}
+        deleteData={deleteData}
+        title={job_title}
+      />
+      <div className="relative w-[830px] h-[320px] bg-[#FFFFFF] rounded-lg border-2 border-[#DADEDF] p-4 m-8">
+        <div className="flex w-full h-full space-x-2">
+          <div className="w-12 h-12 ml-2">
+            <img src="assets/netflix.png" alt="logo" />
           </div>
-          <div className="absolute top-8 flex flex-col justify-around line-clamp-1">
-            <CardText
-              title={`${capitalize(company_name)} - ${capitalize(industry)}`}
-            />
-            <div className="font-poppins font-normal text-base text-[#646464]">
-              {`${capitalize(location)} (${capitalize(remote_type)})`}
+          <div className="relative flex flex-col justify-between w-full">
+            <div>
+              <p className={`text-2xl font-poppins font-normal line-clamp-1`}>
+                {capitalize(job_title)}
+              </p>
             </div>
-            <div className="flex flex-col gap-2.5 justify-around h-full mt-3">
-              <CardText title="Part-Time (9.00am - 5.00pm IST)" />
+            <div className="absolute top-8 flex flex-col justify-around line-clamp-1">
               <CardText
-                title={`Experience (${experience_min} - ${experience_max} years)`}
+                title={`${capitalize(company_name)} - ${capitalize(industry)}`}
               />
-              <CardText
-                title={`INR (\u20B9) ${salary_min} - ${salary_max} / Month`}
-              />
-              <CardText
-                title={`${total_employee ? total_employee : 0} employees`}
-              />
+              <div className="font-poppins font-normal text-base text-[#646464]">
+                {`${capitalize(location)} (${capitalize(remote_type)})`}
+              </div>
+              <div className="flex flex-col gap-2.5 justify-around h-full mt-3">
+                <CardText title="Part-Time (9.00am - 5.00pm IST)" />
+                <CardText
+                  title={`Experience (${
+                    experience_min ? experience_min : "NA"
+                  } - ${experience_max ? experience_max : "NA"} years)`}
+                />
+                <CardText
+                  title={`INR (\u20B9) ${salary_min ? salary_min : "NA"} - ${
+                    salary_max ? salary_max : "NA"
+                  } / Month`}
+                />
+                <CardText
+                  title={`${total_employee ? total_employee : 0} employees`}
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="flex justify-start items-center space-x-6">
-            <Button
-              fontWeight={font_weight.medium}
-              title="Apply Now"
-              isDisabled={apply_type === "external"}
-            />
-            <Button
-              fontWeight={font_weight.medium}
-              title="External Apply"
-              isDisabled={apply_type === "quick"}
-            />
+            <div className="flex justify-start items-center space-x-6">
+              <Button
+                fontWeight={font_weight.medium}
+                title="Apply Now"
+                isDisabled={apply_type === "extrenal"}
+              />
+              <Button
+                fontWeight={font_weight.medium}
+                title="External Apply"
+                isDisabled={apply_type === "quick"}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="absolute right-0 top-0 m-5">
+          <div className="flex justify-center items-center space-x-4">
+            <div
+              onClick={editBtnHandler}
+              className="cursor-pointer flex justify-center items-center p-2 bg-[#D8D8D8] rounded-full"
+            >
+              <Edit />
+            </div>
+            <div
+              onClick={deleteBtnClickHandler}
+              className="cursor-pointer flex justify-center items-center p-2 bg-[#D8D8D8] rounded-full"
+            >
+              <Delete />
+            </div>
           </div>
         </div>
       </div>
-      <div className="absolute right-0 top-0 m-5">
-        <div className="flex justify-center items-center space-x-4">
-          <div onClick={editBtnHandler}>
-            <Edit />
-          </div>
-          <div onClick={deleteBtnHandler}>
-            <Delete />
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   );
 }

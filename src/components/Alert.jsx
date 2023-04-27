@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Alert({ alert }) {
   return (
-    <div className="absolute top-0">
+    <div className="absolute top-0 z-50">
       {alert && (
         <div
           className={`border-t-4 fixed w-full mx-auto bg-white border-red-500 rounded-b text-teal-900 px-4 py-3 shadow-md`}

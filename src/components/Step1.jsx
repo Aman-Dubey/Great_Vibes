@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputField from "./InputField";
 import { Constants } from "../constants/constants";
 import Heading from "./Heading";
 import Button from "./Button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Step1({ showAlert }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { overall, font_size, font_weight } = Constants;
   const [step1, setStep1] = useState({
     job_title: "",
@@ -15,6 +16,18 @@ export default function Step1({ showAlert }) {
     location: "",
     remote_type: "",
   });
+
+  useEffect(() => {
+    if (!location.state) return;
+    const toUpdateData = location.state.data;
+    setStep1({
+      job_title: toUpdateData.job_title,
+      company_name: toUpdateData.company_name,
+      industry: toUpdateData.industry,
+      location: toUpdateData.location,
+      remote_type: toUpdateData.remote_type,
+    });
+  }, [location.state]);
 
   const formSubmitHandler = (e) => {
     e.preventDefault();
@@ -61,8 +74,9 @@ export default function Step1({ showAlert }) {
         "Remote type name length cannot exceeds 20 characters",
         1
       );
-    console.log("success");
-    navigate("/form2", { state: step1 });
+    navigate("/form2", {
+      state: { step1, toUpdate: location.state ? location.state.data : null },
+    });
   };
 
   return (
@@ -89,6 +103,7 @@ export default function Step1({ showAlert }) {
               <InputField
                 title="Job title"
                 id="job_title"
+                value={step1.job_title}
                 isRequired={true}
                 placeHolder="UX UI Designer"
                 setForm={setStep1}
@@ -97,6 +112,7 @@ export default function Step1({ showAlert }) {
               <InputField
                 title="Company name"
                 id="company_name"
+                value={step1.company_name}
                 isRequired={true}
                 placeHolder="Google"
                 setForm={setStep1}
@@ -105,6 +121,7 @@ export default function Step1({ showAlert }) {
               <InputField
                 title="Industry"
                 id="industry"
+                value={step1.industry}
                 isRequired={true}
                 placeHolder="Information Technology"
                 setForm={setStep1}
@@ -115,6 +132,7 @@ export default function Step1({ showAlert }) {
               <InputField
                 title="Location"
                 id="location"
+                value={step1.location}
                 isRequired={false}
                 placeHolder="Chennai"
                 setForm={setStep1}
@@ -123,6 +141,7 @@ export default function Step1({ showAlert }) {
               <InputField
                 title="Remote type"
                 id="remote_type"
+                value={step1.remote_type}
                 isRequired={false}
                 placeHolder="In-office"
                 setForm={setStep1}

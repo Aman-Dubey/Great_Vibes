@@ -5,6 +5,7 @@ export default function InputField({
   title = "",
   type = "text",
   id,
+  value,
   isRequired,
   placeHolder,
   isExAbsent = false,
@@ -36,6 +37,7 @@ export default function InputField({
         placeholder={`${isExAbsent ? "" : "ex. "}${placeHolder}`}
         required={isRequired}
         name={id}
+        value={value}
         onChange={changeHandler}
       />
     </div>

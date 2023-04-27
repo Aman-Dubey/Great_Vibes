@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InputField from "./InputField";
 import { Constants } from "../constants/constants";
 import Heading from "./Heading";
@@ -13,16 +13,30 @@ export default function Step2({ showAlert }) {
   const navigate = useNavigate();
   const { font_size, font_weight } = Constants;
   const [applyType, setApplyType] = useState();
-  const step1 = location.state;
+  const step1 = location.state.step1;
   const [isLoading, setIsLoading] = useState(false);
   const [step2, setStep2] = useState({
-    experience_min: 0,
-    experience_max: 0,
-    salary_min: 0,
-    salary_max: 0,
-    total_employee: "0",
+    experience_min: "",
+    experience_max: "",
+    salary_min: "",
+    salary_max: "",
+    total_employee: "",
     apply_type: "",
   });
+
+  useEffect(() => {
+    if (!location.state || !location.state.toUpdate) return;
+    const toUpdateData = location.state.toUpdate;
+    setStep2({
+      experience_min: toUpdateData.experience_min,
+      experience_max: toUpdateData.experience_max,
+      salary_min: toUpdateData.salary_min,
+      salary_max: toUpdateData.salary_max,
+      total_employee: toUpdateData.total_employee,
+      apply_type: toUpdateData.apply_type,
+    });
+    setApplyType(toUpdateData.apply_type);
+  }, [location.state]);
 
   const formSubmitHandler = (e) => {
     e.preventDefault();
@@ -72,12 +86,10 @@ export default function Step2({ showAlert }) {
     })
       .then((res) => {
         setIsLoading(false);
-        console.log("Uploaded ");
         navigate("/");
       })
       .catch((e) => {
         setIsLoading(false);
-        console.log("Not uploaded");
       });
   };
 
@@ -107,6 +119,7 @@ export default function Step2({ showAlert }) {
                   <InputField
                     title="Experience"
                     id="experience_min"
+                    value={step2.experience_min}
                     type="number"
                     isRequired={false}
                     isExAbsent={true}
@@ -116,6 +129,7 @@ export default function Step2({ showAlert }) {
 
                   <InputField
                     id="experience_max"
+                    value={step2.experience_max}
                     type="number"
                     isRequired={false}
                     isExAbsent={true}
@@ -126,6 +140,7 @@ export default function Step2({ showAlert }) {
                   <InputField
                     title="Salary"
                     id="salary_min"
+                    value={step2.salary_min}
                     type="number"
                     isRequired={false}
                     isExAbsent={true}
@@ -135,6 +150,7 @@ export default function Step2({ showAlert }) {
 
                   <InputField
                     id="salary_max"
+                    value={step2.salary_max}
                     type="number"
                     isRequired={false}
                     isExAbsent={true}
@@ -147,6 +163,7 @@ export default function Step2({ showAlert }) {
                   <InputField
                     id="total_employee"
                     title="Total employee"
+                    value={step2.total_employee}
                     type="text"
                     isRequired={false}
                     placeHolder="51 - 200"
@@ -160,12 +177,14 @@ export default function Step2({ showAlert }) {
                 <div className="flex justify-start items-center space-x-3 mt-2">
                   <Radio
                     value="quick"
+                    checked={applyType === "quick"}
                     name="apply_type"
                     onChange={setApplyType}
                     title="Quick apply"
                   />
                   <Radio
                     value="extrenal"
+                    checked={applyType === "extrenal"}
                     name="apply_type"
                     onChange={setApplyType}
                     title="External apply"

@@ -4,16 +4,18 @@ import Error from "./404";
 import Card from "./Card";
 import Loading from "./Loading";
 import NavBar from "./NavBar";
-import Confirmation from "./Confirmation";
 
 export default function CardView({ showAlert }) {
   const [isLoading, setIsLoading] = useState(true);
   const [fetchedData, setFeatchedData] = useState(null);
-  const [showModel, setShowModel] = useState(false);
 
   const deleteFunctionHandler = (id) => {
-    console.log(id);
-    console.log("adfasd");
+    let updatedData = [];
+    fetchedData.map((data) => {
+      return data.id !== id ? updatedData.push(data) : null;
+    });
+    setFeatchedData(updatedData);
+    showAlert("Data deleted successfully", 0);
   };
 
   useEffect(() => {
@@ -30,23 +32,26 @@ export default function CardView({ showAlert }) {
   return (
     <>
       <NavBar />
-      <Confirmation showModal={showModel} setShowModal={setShowModel} />
       {isLoading ? (
         <Loading />
       ) : fetchedData && fetchedData.length ? (
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center my-12">
           <div className="grid grid-cols-1 gap-4 2xl:grid-cols-2">
-            {fetchedData.map((data) => {
-              return (
-                <Card
-                  data={data.body}
-                  key={data.id}
-                  id={data.id}
-                  showAlert={showAlert}
-                  onDelete={deleteFunctionHandler}
-                />
-              );
-            })}
+            {fetchedData
+              .slice(0)
+              .reverse()
+              .map((data) => {
+                return (
+                  <Card
+                    data={data.body}
+                    key={data.id}
+                    id={data.id}
+                    showAlert={showAlert}
+                    onDelete={deleteFunctionHandler}
+                    setIsLoading={setIsLoading}
+                  />
+                );
+              })}
           </div>
         </div>
       ) : (
